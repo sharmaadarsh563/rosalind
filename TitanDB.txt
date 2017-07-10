@@ -1,1 +1,0 @@
-sudo bin/titan.sh -c cassandra-es start

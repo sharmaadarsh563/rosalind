@@ -47,7 +47,7 @@ class SearchProteinMotif(object):
 	def search(self):
 		fasta_seqs = "fasta_seqs.txt"
 		f_write = open(self.base_dir + fasta_seqs, "w")
-		with open("data.txt", "r") as f_read:
+		with open("datasets/MPRT.txt", "r") as f_read:
 			lines = f_read.readlines()
 			accession_ids = []
 			for line in lines:

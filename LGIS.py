@@ -1,6 +1,19 @@
-import copy
+# A measure of gene order similarity
 
-def lgis(seq, num):
+# Say that two chromosomes share n genes; if we label the genes of one chromosome
+# by the numbers 1 through n in the order that they appear, then the second chromosome
+# will be given by a permutation of these numbered genes. To find the largest number
+# of genes appearing in the same order, we need only to find the largest collection of
+# increasing elements in the permutation.
+
+import copy
+from settings import BASE_DIR
+
+def __lgis(seq, num):
+	if not isinstance(seq, list) or\
+	 not isinstance(num, int):
+		raise Exception(
+			"Data is corrupted! Please provide input.")
 	liss, ldss = [[]]*num, [[]]*num
 
 	# initializing lists of longest increasing/decreasing
@@ -37,18 +50,22 @@ def lgis(seq, num):
 	return max_liss, max_ldss
 
 if __name__ == "__main__":
-	f = open("datasets/LGIS.txt", "r")
-	lines = f.readlines()
-	num = int(lines[0])
-	seq = map(int, lines[1].split(" "))
-	max_liss, max_ldss = lgis(seq, num)
+	try:
+		f = open(BASE_DIR + "LGIS.txt", "r")
+		lines = f.readlines()
+		f.close()
+		num = int(lines[0])
+		seq = map(int, lines[1].split(" "))
+		max_liss, max_ldss = __lgis(seq, num)
 
-	# print longest increasing subsequence
-	for i in range(len(max_liss)-1):
-		print str(max_liss[i])+" ",
-	print str(max_liss[len(max_liss)-1])
+		# print longest increasing subsequence
+		for i in range(len(max_liss)-1):
+			print str(max_liss[i])+" ",
+		print str(max_liss[len(max_liss)-1])
 
-	# print longest decreasing subsequence
-	for i in range(len(max_ldss)-1):
-		print str(max_ldss[i])+" ",
-	print str(max_ldss[len(max_ldss)-1])
+		# print longest decreasing subsequence
+		for i in range(len(max_ldss)-1):
+			print str(max_ldss[i])+" ",
+		print str(max_ldss[len(max_ldss)-1])
+	except Exception as e:
+		print "Error while find gene order similarity! -- {}".format(str(e))

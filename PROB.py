@@ -1,6 +1,14 @@
 import math
 
 def find_prob_of_seq(dna, gc_conts):
+	"""
+	probability of 'dna'
+	"""
+
+	if not isinstance(dna, basestring) or\
+	 not isinstance(gc_conts, list):
+		return [0.0]
+
 	ans = [0.0]*len(gc_conts)
 	for i in range(len(gc_conts)):
 		gc_cont = gc_conts[i]/2

@@ -1,31 +1,48 @@
 # ASSUMPTION: There exists a unique way to reconstruct the entire
 #             chromosome from these reads by gluing together pairs
 #             of reads that overlap by more than half their length
+from settings import BASE_DIR
+
 
 class Read(object):
+	"""
+	A read's representation
+	"""
 
 	def __init__(self, data):
+		# actual sequence
 		self.read = data
+		# whether this read has been used to
+		# assemble DNA
 		self.consumed = False
 
 def getReads(file):
 	reads = []
-	with open(file, "r") as f:
-		lines = f.readlines()
-		num_of_lines = len(lines)
-		i = 0
-		while i < num_of_lines and lines[i][0] == '>':
-			read = ''
-			i += 1
-			while i < num_of_lines and lines[i][0] != '>':
-				read += lines[i].strip('\n')
+	if not file:
+		return reads
+	try:
+		with open(file, "r") as f:
+			lines = f.readlines()
+			num_of_lines = len(lines)
+			i = 0
+			while i < num_of_lines and lines[i][0] == '>':
+				read = ''
 				i += 1
-			reads.append(Read(read))
+				while i < num_of_lines and lines[i][0] != '>':
+					read += lines[i].strip('\n')
+					i += 1
+				reads.append(Read(read))
+	except Exception as e:
+		raise Exception(str(e))
 	return reads
 
 # Time-complexity: O(length of read), as each read's letter is
 #                  parsed only once
 def getPrefixEndIndex(dna, read):
+	if not isinstance(dna, basestring) or\
+	 not isinstance(read, basestring):
+		return -1
+
 	read_len = len(read)
 	dna_len = len(dna)
 
@@ -49,7 +66,11 @@ def getPrefixEndIndex(dna, read):
 
 # Time-complexity: O(length of read), as each read's letter is
 #                  parsed only once
-def getSuffixEndIndex(dna, read):
+def getSuffixStartIndex(dna, read):
+	if not isinstance(dna, basestring) or\
+	 not isinstance(read, basestring):
+		return -1
+
 	read_len = len(read)
 	dna_len = len(dna)
 
@@ -74,6 +95,10 @@ def getSuffixEndIndex(dna, read):
 # Time-complexity: O(length of read)
 def midOverlap(dna, read):
 
+	if not isinstance(dna, basestring) or\
+	 not isinstance(read, basestring):
+		return (dna, True)
+
 	# check for read's prefix as dna's suffix
 	prefix_end_index = getPrefixEndIndex(dna, read)
 
@@ -82,7 +107,7 @@ def midOverlap(dna, read):
 		return (dna, True)
 
 	# check for read's suffix as dna's prefix
-	suffix_start_index = getSuffixEndIndex(dna, read)
+	suffix_start_index = getSuffixStartIndex(dna, read)
 
 	if suffix_start_index >= 0 and (len(read) - suffix_start_index)\
 	 >= len(read)/2:
@@ -92,6 +117,8 @@ def midOverlap(dna, read):
 	return (dna, False)
 
 def assembleReads(reads):
+	if not reads or not isinstance(reads, list):
+		return ""
 	dna = reads[0].read
 	reads[0].consumed = True
 
@@ -110,6 +137,8 @@ def assembleReads(reads):
 
 
 if __name__ == "__main__":
-	file = "datasets/LONG.txt"
-	reads = getReads(file)
-	print assembleReads(reads)
+	try:
+		reads = getReads(BASE_DIR + "LONG.txt")
+		print assembleReads(reads)
+	except Exception as e:
+		print "Error is assembling reads! -- {}".format(str(e))
